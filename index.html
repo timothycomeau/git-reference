@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Git Reference</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="d/css/style.css">
+</head>
+<body>
+<!--[if lt IE 7]><p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p><![endif]-->
+
+<div id="w">
+<div id="content">
+	<h1>Git Reference</h1>
+	<p class='subtitle'>A collection of notes as I've learned Git. &bull;
+		Timothy Comeau &bull; Revision Date: 2014-05-13</p>
+	<hr>
+
+<dl class="accordion">
+	<dt><a href=""><h2>Roll-backs</h2></a></dt>
+	<dd>
+	<p><b>What you want to do:</b> You want to access an earlier commit's code.</p>
+
+	<pre><code>git checkout #hash</code></pre>
+
+	<p>This checkouts all of the files that had been last commited. You can also undo all changes and restore the current working files to the last commit by a HEAD reset:</p>
+
+	<pre><code>git rest --hard HEAD</code></pre>
+
+	<p>If you want an individual file's last commited code, just check out that particular file</p>
+
+	<pre><code>git checkout --file</code></pre>
+
+	<p>Best practice is to checkout a previous commit as a branch:</p>
+
+	<pre><code>git branch branchname a9c14</code></pre>
+	</dd>
+</dl>
+
+<hr>
+<dl class="accordion">
+	<dt><a href=""><h2>Branches</h2></a></dt>
+	<dd>
+	<p>A branch is a development path. List created branches with <code>git branch</code></p>
+
+<pre><code>  bug-fix 
+  dev
+  feature 
+* master 
+  production 
+  working</code></pre>
+
+	<p>The branches can be merged together as need be, and eventually merged into development, production, or master</p>
+
+<pre><code>git branch working => this creates a branch called working
+git checkout working => this moves you into this branch
+[makes edits]
+git checkout master => this moves you back into the master branch
+git merge working => this merges working into master</code></pre>
+
+	<p>To delete a branch in spite of warning</p>
+
+	<pre><code>git branch -D name</code></pre>
+
+	<p>To create a branch from a previous commit</p>
+
+	<pre><code>git branch branchname a9c14</code></pre>
+	</dd>
+</dl>
+
+<hr>
+
+<dl class="accordion">
+<dt><a href=""><h2>Merging</h2></a></dt>
+	<dd>
+	<p><b>What you want to do:</b> merge individual files from another branch.</p>
+	<p>In this case we have two branches:</p>
+
+<pre><code>* master
+  working</code></pre>
+
+	<p>And we'll switch into `working`</p>
+
+	<pre><code>checkout working</code></pre>
+
+	<p>Makes changes to a file such as style.css</p>
+
+<pre><code>git status
+modified: style.css
+git commit -a -m "committing changes made to style.css"
+# on branch working</code></pre>
+
+	<p>Then to merge the modified file into `master`, checkout `master`</p>
+
+<pre><code>git checkout master
+git status
+#on branch master</code></pre>
+
+	<p>and then checkout the file from the branch where it is changed</p>
+
+<pre><code>#on branch master
+git checkout working -- style.css => pulls working branch's style.css file</code></pre> 
+<pre><code>git status
+modified: style.css
+git commit -m "committing style.css modified in working branch"</code></pre>
+
+	<p>Branches can be merged together as need be, and eventually merged into development, production, or master</p>
+
+<pre><code>git branch working => this creates a branch called working
+git checkout working => this moves you into this branch
+[makes edits]
+git checkout master => this moves you back into the master branch
+git merge working => this merges working into master</code></pre>
+
+	<p>You need to be in the branch that you <i>want to merge into</i>. In the above example, our HEAD (location) was in the `master` branch and from there we issued the merge command to bring in `working`.</p>
+</dd>
+</dl>
+
+<hr>
+
+<dl class="accordion">
+<dt><a href=""><h2>Working with Remotes</h2></a></dt>
+	<dd>
+	<p>Any location can be a remote, by using bare repos.</p>
+
+	<p>Set up a bare repo by <code>cd</code> into the folder you want to make the remote. In this case the remote will be at 
+	<b>path/to/document/ProjectM</b> and we will set up a bare repository called <b>files.git</b>.</p>
+
+	<pre><code>cd /path/to/documents/ProjectM</pre></code>
+
+	<pre><code>git init --bare files.git</code></pre>
+
+	<p>Our local development files are at /Sites/Dev/ProjectM-Local, which already has Git running on it. Having returned to this directory in the Terminal, we add the remote to the local's Git config:</p>
+
+	<pre><code>git remote add add origin /path/to/documents/ProjectM/files.git</code></pre>
+
+	<p>This code literally reads: "remote command: add a remote called origin at following path".</p>
+
+	<p>Sync the local Git-repository (.git) files with that of the remote named "Origin" by <i>pushing</i> them there. The default name of a default branch of a local repository is always "master", thus the command to push the master's files to the origin is:</p>
+
+	<pre><code>git push origin master</code></pre>
+
+	<p>In the Github GUI, this address appears in the Settings panel.</p>
+
+	<p><img src="d/img/git-remote.png" /></p>
+
+	<h3>List Remotes</h3>
+
+	<pre><code>git remote</code></pre>
+
+<p>...will list remotes</p>
+
+	<pre><code>git remote -v</code></pre>
+
+	<p>...will list details</p>
+
+	</dd>
+</dl>
+
+<hr>
+<dl class="accordion">
+<dt><a href=""><h2>Pushing Branches to Remotes</h2></a></dt>
+	<dd>
+	<p>On a project with two branches: `master` &amp; `deploy`:</p>
+
+<pre><code>$ git branch
+* master
+  deploy</code></pre>
+
+	<p>You set up remote:</p>
+
+	<pre><code>git remote add origin /path/to/bare-repo.git</code></pre>
+
+	<p>You then push to remote:</p>
+
+	<pre><code>git push origin master</code></pre>
+
+	<p>This pushes to the remote the `master` branch</p>
+
+	<p>You then want to push the branch deploy</p>
+
+	<pre><code>git push origin deploy</code></pre>
+
+	<p>This pushes that branch to the remote.</p>
+
+	<p>The .git files just store Git's data, and are not an active repository. In order to view the files, you need to clone this repo.</p>
+
+	<pre><code>git clone /path/to/bare-repo.git</code></pre>
+
+	<p>Once done, if you <code>git st</code> on the cloned repo you will still see you're on branch `master`.</p>
+
+	<p>If the branches were pushed to the origin after you cloned, you need to <b>sync the clone repo with the bare-repo.git</b> files by using the pull command:</p>
+
+	<pre><code>git pull origin</code></pre>
+
+	<p>After, in order to see the new pushed branch(s):</p>
+
+	<pre><code>git branch -r</code></pre>
+
+	<p>Running git branch -r on a fresh cloned repo will show branches if there any.</p>
+
+	<p>In order to makes these active it within the cloned remote/origin:</p>
+
+	<pre><code>git checkout --track -b deploy origin/deploy</code></pre>
+
+	<p>then: <code>git branch</code> and you'll see the new branch listed.</p>
+	</dd>
+</dl>
+<hr>
+
+<dl class="accordion">
+<dt><a href=""><h2>Tagging</h2></a></dt>
+	<dd>
+	<p>To tag a commit. In this case, we will tag a commit as version 1.0 with a message:</p>
+
+<pre><code>git tag -a v1.0 -m "my version 1.0"</code></pre>
+
+	<p>To list tags, a command similar to listing branches</p>
+
+<pre><code>git tag</code></pre>
+
+	</dd>
+</dl>
+<hr>
+<dl class="accordion">
+<dt><a href=""><h2>Commiting</h2></a></dt>
+	<dd>
+	<p>To fix a commit message:</p>
+
+<pre><code>git commit --amend -m "This is the correct message"</code></pre>
+
+If you want to add files to a commit, like if you'd forgotten before
+
+<pre><code>git add `files`
+git commit --amend -m "commit message"
+</code></pre>
+
+	</dd>
+</dl>
+<hr>
+
+<dl class="accordion">
+<dt><a href=""><h2>Re: Github</h2></a></dt>
+	<dd>
+	<p>Perhaps you want to delete the git history of a GitHub repo, for example for a repository containing template-files. After cloning, cd into the repo directory and delete it's .git directory:</p>
+
+<pre><code>rm -rf .git
+git init
+git add .
+git commit -m "Initial commit"</code></pre>
+	<p>This resets the commit history completely.</p>
+
+	<p>You can also just move the contents out of the folder created/downloaded from Github, which will leave behind that directory's .git folders, thus eliminating the Git history on the files.</p>
+	</dd>
+</dl>
+
+</div><!-- ends content -->
+</div><!-- ends w -->
+
+<script src="d/js/jquery-2.1.0.min.js"></script>
+<script src="d/js/jquery-ui-1.10.4.custom.js"></script>
+
+
+<script>
+(function($) {
+  var allPanels = $('.accordion > dd').hide();
+   $('.accordion > dt > a').click(function() {
+    allPanels.slideUp();
+    $(this).parent().next().slideDown();
+    return false;
+  });
+})(jQuery);
+
+</script>
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-143728-10', 'timothycomeau.com');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
